@@ -57,7 +57,6 @@ function Grid(block) {
           rect(x * block + block / 2 - coinSize / 2, y * block + block / 2 - coinSize / 2, coinSize, coinSize)
         } else if (cell == P) {
           fill(255);
-          var coinSize = block / 5
           ellipse(x * block + block / 2, y * block + block / 2, block / 2)
         } else if (cell == W) {
           fill(color(25,25,166));
