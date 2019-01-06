@@ -71,96 +71,101 @@ Ghost.prototype.teleports = function(grid) {
 }
 
 Ghost.prototype.chooseMove = function(grid, targetPos) {
+  var dist = -1;
+  var newDist;
+  var that = this;
+  var targetGridPos = createVector(Math.floor(targetPos.x / grid.block), Math.floor(targetPos.y / grid.block));
+
+  [Ghost.prototype.tryUp, Ghost.prototype.tryLeft, Ghost.prototype.tryDown, Ghost.prototype.tryRight].forEach(function(computeFunction) {
+    newDist = computeFunction.call(that, grid, targetGridPos, dist);
+    if (newDist != -1 && (newDist < dist || dist == -1)) {
+      dist = newDist;
+    }
+  });
+}
+
+Ghost.prototype.tryMove = function(grid, move, targetGridPos, dist, moveMethod) {
   var gridX = Math.floor(this.pos.x / grid.block);
   var gridY = Math.floor(this.pos.y / grid.block);
-  var targetGridX = Math.floor(targetPos.x / grid.block);
-  var targetGridY = Math.floor(targetPos.y / grid.block);
-  var dist = -1;
 
-  // UP
-  if (Ghost.prototype.canMoveDir.call(this, grid, 0, -1)) {
-    var xDist = Math.abs(gridX - targetGridX);
-    var yDist = Math.abs(gridY - 1 - targetGridY);
+  if (Ghost.prototype.canMoveDir.call(this, grid, move)) {
+    var xDist = Math.abs(gridX + move.x - targetGridPos.x);
+    var yDist = Math.abs(gridY + move.y - targetGridPos.y);
     var newDist = xDist + yDist;
     if (newDist < dist || dist == -1) {
-      dist = newDist;
-      Ghost.prototype.moveUp.call(this, grid)
+      moveMethod.call(this, grid)
+      return newDist;
     }
   }
-  // LEFT
-  if (Ghost.prototype.canMoveDir.call(this, grid, -1, 0)) {
-    var xDist = Math.abs(gridX - 1 - targetGridX);
-    var yDist = Math.abs(gridY - targetGridY);
-    var newDist = xDist + yDist;
-    if (newDist < dist || dist == -1) {
-      dist = newDist;
-      Ghost.prototype.moveLeft.call(this, grid)
-    }
-  }
-  // DOWN
-  if (Ghost.prototype.canMoveDir.call(this, grid, 0, 1)) {
-    var xDist = Math.abs(gridX - targetGridX);
-    var yDist = Math.abs(gridY + 1 - targetGridY);
-    var newDist = xDist + yDist;
-    if (newDist < dist || dist == -1) {
-      dist = newDist;
-      Ghost.prototype.moveDown.call(this, grid)
-    }
-  }
-  // RIGHT
-  if (Ghost.prototype.canMoveDir.call(this, grid, 1, 0)) {
-    var xDist = Math.abs(gridX + 1 - targetGridX);
-    var yDist = Math.abs(gridY - targetGridY);
-    var newDist = xDist + yDist;
-    if (newDist < dist || dist == -1) {
-      dist = newDist;
-      Ghost.prototype.moveRight.call(this, grid)
-    }
-  }
+  return -1;
+}
+
+Ghost.prototype.tryUp = function(grid, targetGridPos, dist) {
+  var move = createVector(0, -1);
+
+  return Ghost.prototype.tryMove.call(this, grid, move, targetGridPos, dist, Ghost.prototype.moveUp);
+}
+
+Ghost.prototype.tryLeft = function(grid, targetGridPos, dist) {
+  var move = createVector(-1, 0);
+
+  return Ghost.prototype.tryMove.call(this, grid, move, targetGridPos, dist, Ghost.prototype.moveLeft);
+}
+
+Ghost.prototype.tryDown = function(grid, targetGridPos, dist) {
+  var move = createVector(0, 1);
+
+  return Ghost.prototype.tryMove.call(this, grid, move, targetGridPos, dist, Ghost.prototype.moveDown);
+}
+
+Ghost.prototype.tryRight = function(grid, targetGridPos, dist) {
+  var move = createVector(1, 0);
+
+  return Ghost.prototype.tryMove.call(this, grid, move, targetGridPos, dist, Ghost.prototype.moveRight);
 }
 
 Ghost.prototype.moveUp = function(grid) {
-  return Ghost.prototype.moveDir.call(this, grid, 0, -1);
+  return Ghost.prototype.moveDir.call(this, grid, createVector(0, -1));
 }
 
 Ghost.prototype.moveDown = function(grid) {
-  return Ghost.prototype.moveDir.call(this, grid, 0, 1);
+  return Ghost.prototype.moveDir.call(this, grid, createVector(0, 1));
 }
 
 Ghost.prototype.moveLeft = function(grid) {
-  return Ghost.prototype.moveDir.call(this, grid, -1, 0);
+  return Ghost.prototype.moveDir.call(this, grid, createVector(-1, 0));
 }
 
 Ghost.prototype.moveRight = function(grid) {
-  return Ghost.prototype.moveDir.call(this, grid, 1, 0);
+  return Ghost.prototype.moveDir.call(this, grid, createVector(1, 0));
 }
 
-Ghost.prototype.moveDir = function(grid, xMove, yMove) {
+Ghost.prototype.moveDir = function(grid, move) {
   var gridX = Math.floor(this.pos.x / grid.block);
   var gridY = Math.floor(this.pos.y / grid.block);
 
-  if (Ghost.prototype.canMoveDir.call(this, grid, xMove, yMove)) {
-    this.nextDir.y = yMove;
-    this.nextDir.x = xMove;
+  if (Ghost.prototype.canMoveDir.call(this, grid, move)) {
+    this.nextDir.y = move.y;
+    this.nextDir.x = move.x;
     return true;
   } else {
     return false;
   }
 }
 
-Ghost.prototype.canMoveDir = function(grid, xMove, yMove) {
+Ghost.prototype.canMoveDir = function(grid, move) {
   var gridX = Math.floor(this.pos.x / grid.block);
   var gridY = Math.floor(this.pos.y / grid.block);
 
   // Can't go back
-  if (xMove != 0 && xMove == this.dir.x * -1) {
+  if (move.x != 0 && move.x == this.dir.x * -1) {
     return false;
   }
-  if (yMove != 0 && yMove == this.dir.y * -1) {
+  if (move.y != 0 && move.y == this.dir.y * -1) {
     return false;
   }
 
-  if (grid.grid[gridY + yMove][gridX + xMove] != W) {
+  if (grid.grid[gridY + move.y][gridX + move.x] != W) {
     return true
   } else {
     return false
