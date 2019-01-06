@@ -86,6 +86,8 @@ function Grid(block) {
       if (gridX == ghostGridX && gridY == ghostGridY) {
         pacman.pos = createVector(14 * block + block / 2,
           23 * block + block / 2);
+        pacman.dir = createVector(0, 0);
+        pacman.nextMove = 0;
       }
     });
   }

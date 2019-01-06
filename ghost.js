@@ -58,7 +58,10 @@ function Ghost(color, block, startVector) {
     this.pos.x += this.dir.x;
     this.pos.y += this.dir.y;
 
-    // Teleportation case
+    this.teleports();
+  }
+
+  this.teleports = function() {
     if (this.pos.x > 28 * block) {
       this.pos.x = 0;
     } else if (this.pos.x < 0) {
@@ -71,14 +74,14 @@ function Ghost(color, block, startVector) {
     var gridY = Math.floor(this.pos.y / block);
     var targetGridX = Math.floor(targetPos.x / block);
     var targetGridY = Math.floor(targetPos.y / block);
-    var dist = 10000000000;
+    var dist = -1;
 
     // UP
     if (this.canMoveDir(grid, 0, -1)) {
       var xDist = Math.abs(gridX - targetGridX);
       var yDist = Math.abs(gridY - 1 - targetGridY);
       var newDist = xDist + yDist;
-      if (newDist < dist) {
+      if (newDist < dist || dist == -1) {
         dist = newDist;
         this.moveUp(grid)
       }
@@ -88,7 +91,7 @@ function Ghost(color, block, startVector) {
       var xDist = Math.abs(gridX - 1 - targetGridX);
       var yDist = Math.abs(gridY - targetGridY);
       var newDist = xDist + yDist;
-      if (newDist < dist) {
+      if (newDist < dist || dist == -1) {
         dist = newDist;
         this.moveLeft(grid)
       }
@@ -98,7 +101,7 @@ function Ghost(color, block, startVector) {
       var xDist = Math.abs(gridX - targetGridX);
       var yDist = Math.abs(gridY + 1 - targetGridY);
       var newDist = xDist + yDist;
-      if (newDist < dist) {
+      if (newDist < dist || dist == -1) {
         dist = newDist;
         this.moveDown(grid)
       }
@@ -108,7 +111,7 @@ function Ghost(color, block, startVector) {
       var xDist = Math.abs(gridX + 1 - targetGridX);
       var yDist = Math.abs(gridY - targetGridY);
       var newDist = xDist + yDist;
-      if (newDist < dist) {
+      if (newDist < dist || dist == -1) {
         dist = newDist;
         this.moveRight(grid)
       }

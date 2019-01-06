@@ -8,7 +8,7 @@ var grid;
 
 function setup() {
   // frameRate(5) // DEBUG
-  block = 16;
+  var block = 16;
   createCanvas(block * 28, block * 31);
 
   grid = new Grid(block);
