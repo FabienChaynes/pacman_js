@@ -7,43 +7,8 @@ function Ghost(color, block, startVector) {
   this.color = color;
 }
 
-Ghost.prototype.move = function(grid, pacman, name, blinky) {
+Ghost.prototype.move = function(grid, pacman, blinky) {
   var targetPos = createVector(pacman.pos.x, pacman.pos.y);
-
-  if (name == 'p') {
-    if (pacman.dir.x != 0) {
-      targetPos.x += pacman.dir.x * 2 * grid.block;
-    }
-    if (pacman.dir.y != 0) {
-      targetPos.y += pacman.dir.y * 2 * grid.block;
-    }
-  }
-
-  if (name == 'c') {
-    var gridX = Math.floor(this.pos.x / grid.block);
-    var gridY = Math.floor(this.pos.y / grid.block);
-    var targetGridX = Math.floor(pacman.pos.x / grid.block);
-    var targetGridY = Math.floor(pacman.pos.y / grid.block);
-    var xDist = Math.abs(gridX - targetGridX);
-    var yDist = Math.abs(gridY - 1 - targetGridY);
-    if (xDist + yDist < 8) {
-      targetPos.x = 0;
-      targetPos.y = 32 * grid.block;
-    }
-  }
-
-  if (name == 'i') {
-    if (pacman.dir.x != 0) {
-      targetPos.x += pacman.dir.x * 2 * grid.block;
-    }
-    if (pacman.dir.y != 0) {
-      targetPos.y += pacman.dir.y * 2 * grid.block;
-    }
-
-    targetPos.x += (targetPos.x - blinky.pos.x)
-    targetPos.y += (targetPos.y - blinky.pos.y)
-  }
-
   Ghost.prototype.moveTo.call(this, grid, targetPos);
 }
 
