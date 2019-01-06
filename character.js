@@ -21,6 +21,10 @@ function Character(color, block, startVector) {
           this.dir.x = plannedXMove;
         }
       }
+      if (!this.canMoveDir(grid, this.dir.x, this.dir.y)) {
+        this.dir.y = 0;
+        this.dir.x = 0;
+      }
     }
 
     this.pos.x += this.dir.x;
